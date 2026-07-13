@@ -24,6 +24,7 @@
 We have documented the entire workflow from laptop experimentation to cloud scale in the `docs/` folder:
 
 - **[CPU to Cloud Runbook](docs/cpu_to_cloud_runbook.md):** The standard reference guide for pre-cloud verification checks, local CPU env recreation, and standard commands.
+- **[Bare Cloud Setup Order](docs/bare_cloud_setup.md):** Fast, ordered checklist for a fresh Ubuntu 22.04 GPU VM, including conda env creation and first smoke run.
 - **[Cloud Instance Setup Guide](docs/cloud_instance_setup_ubuntu22.md):** Detailed step-by-step manual setup instructions for a fresh Ubuntu 22.04 VM (NVIDIA drivers, CUDA 12.8, Miniconda, HF login, and tmux).
 - **[Cloud Bootstrap Script](docs/bootstrap_cloud.sh):** Automated one-shot shell script that configures drivers, CUDA toolkit, conda environments, SSH keys, and dependencies automatically.
 
