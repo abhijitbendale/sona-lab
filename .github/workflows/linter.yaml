@@ -33,5 +33,5 @@ jobs:
 
       - name: Run Ruff checks
         run: |
-          ruff check tts/ --fix
-          ruff format tts/
+          ruff check tts/
+          ruff format tts/ --check
