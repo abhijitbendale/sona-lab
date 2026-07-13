@@ -200,7 +200,8 @@ def load_wav(
             )
         elif _AUDIO_FALLBACK_WARN_COUNT == 3:
             logging.warning(
-                "Additional torchaudio.load failures suppressed; using soundfile fallback."
+                "Additional torchaudio.load failures suppressed; "
+                "using soundfile fallback."
             )
         wav_np, sr = sf.read(wav_path, always_2d=False)
         if wav_np.ndim == 1:

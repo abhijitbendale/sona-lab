@@ -65,7 +65,7 @@ source .venv/bin/activate
        --batch_size=16 \
        --dataset_path=data/processed/manifests/train_small.jsonl \
        --output_dir=data/processed/vectorized --run_name=my_vec
-   
+
    python tools/data/data_merger.py --dataset_path data/processed/vectorized --remove_shards
    ```
 2. **Supervised Fine-Tuning (SFT):**
@@ -85,7 +85,7 @@ source .venv/bin/activate
 
 ## 🤝 Acknowledgements & Archival Notice
 
-**Sona Lab** originally began as an experimental fork and architectural extension of the open-source **[Inworld TTS](https://github.com/inworld-ai/tts)** repository created by the Inworld AI team. 
+**Sona Lab** originally began as an experimental fork and architectural extension of the open-source **[Inworld TTS](https://github.com/inworld-ai/tts)** repository created by the Inworld AI team.
 
 We extend our gratitude to Inworld AI, the LLaMA / Meta AI team, and the PyTorch / Hugging Face open-source communities. For archival and historical reference, the original upstream Inworld README has been preserved in this repository as [`README_INWORLD_ARCHIVE.md`](README_INWORLD_ARCHIVE.md).
 

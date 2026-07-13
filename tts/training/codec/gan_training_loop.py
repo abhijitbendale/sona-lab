@@ -47,8 +47,7 @@ def _train_micro_batch(
                 batch = next(train_data_loader_iterator)
             except StopIteration:
                 logging.info(
-                    "Reached the end of the training dataset. "
-                    "Restarting the iterator."
+                    "Reached the end of the training dataset. Restarting the iterator."
                 )
                 train_data_loader_iterator = iter(train_data_loader)
                 batch = next(train_data_loader_iterator)

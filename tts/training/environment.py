@@ -69,7 +69,9 @@ def _get_strategy(
     """Returns the strategy to use for training."""
     if not torch.cuda.is_available():
         logging.info("CUDA unavailable, using SingleDeviceStrategy on CPU...")
-        return strategies.SingleDeviceStrategy(device="cpu", precision=training_precision)
+        return strategies.SingleDeviceStrategy(
+            device="cpu", precision=training_precision
+        )
 
     if strategy_name == "ddp":
         if torch.cuda.device_count() == 1:

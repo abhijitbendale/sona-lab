@@ -13,8 +13,7 @@ def _find_linear_modules(model: torch.nn.Module) -> list[str]:
             suffixes.add(name.split(".")[-1])
     if len(suffixes) == 0:
         raise ValueError(
-            f"Model {type(model)} contains no linear component, "
-            "LoRA can't be applied."
+            f"Model {type(model)} contains no linear component, LoRA can't be applied."
         )
     return list(suffixes)
 

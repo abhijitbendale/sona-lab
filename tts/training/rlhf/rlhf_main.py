@@ -138,7 +138,7 @@ def run_training(
     reward_funcs = rewards.create_reward_funcs(
         reward_func_names=config.rlhf_training.reward_funcs,
         tokenizer=tokenizer,
-        device=torch.device(f"cuda:{rank%8}"),
+        device=torch.device(f"cuda:{rank % 8}"),
         save_completions_steps=config.rlhf_training.save_completions_steps,
         save_dir=os.path.join(config.checkpointing.directory, _COMPLETION_SAVE_SUB_DIR),
         logging_steps=config.training.logging_steps,
