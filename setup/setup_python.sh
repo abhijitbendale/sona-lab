@@ -58,6 +58,54 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+get_torch_build_info() {
+    python3 - <<'PY'
+try:
+    import torch
+    print(f"{torch.__version__}|{torch.version.cuda or 'None'}")
+except Exception:
+    print("MISSING|None")
+PY
+}
+
+ensure_torch_cuda_compat() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        return 0
+    fi
+
+    CURRENT_INFO=$(get_torch_build_info)
+    CURRENT_TORCH_VERSION="${CURRENT_INFO%%|*}"
+    CURRENT_TORCH_CUDA="${CURRENT_INFO##*|}"
+
+    TORCH_MISSING=0
+    TORCH_MISMATCH=0
+    if [[ "$CURRENT_TORCH_VERSION" == "MISSING" ]]; then
+        TORCH_MISSING=1
+    elif [[ "$CURRENT_TORCH_VERSION" != ${TORCH_SERIES}* || "$CURRENT_TORCH_CUDA" != "$TARGET_TORCH_CUDA" ]]; then
+        TORCH_MISMATCH=1
+    fi
+
+    if [[ "$TORCH_MISSING" -eq 1 || "$TORCH_MISMATCH" -eq 1 ]]; then
+        if [[ "$TORCH_MISSING" -eq 1 ]]; then
+            log_warning "PyTorch not found. Installing pinned Torch stack for CUDA $CUDA_VERSION..."
+        else
+            log_warning "Detected incompatible Torch build: version=$CURRENT_TORCH_VERSION cuda=$CURRENT_TORCH_CUDA"
+            log_warning "Target build is Torch $TORCH_PIN_VERSION with CUDA $TARGET_TORCH_CUDA. Reinstalling clean stack..."
+        fi
+
+        python3 -m pip uninstall -y torch torchaudio torchvision flash-attn >/dev/null 2>&1 || true
+        python3 -m pip install --no-cache-dir --index-url "$TORCH_INDEX_URL" \
+            "torch==$TORCH_PIN_VERSION" "torchaudio==$TORCHAUDIO_PIN_VERSION"
+
+        UPDATED_INFO=$(get_torch_build_info)
+        UPDATED_TORCH_VERSION="${UPDATED_INFO%%|*}"
+        UPDATED_TORCH_CUDA="${UPDATED_INFO##*|}"
+        log_success "Torch stack set to version=$UPDATED_TORCH_VERSION cuda=$UPDATED_TORCH_CUDA"
+    else
+        log_success "Torch/CUDA pre-check passed (version=$CURRENT_TORCH_VERSION, cuda=$CURRENT_TORCH_CUDA)"
+    fi
+}
+
 # Get the project root directory (parent of setup directory)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -93,15 +141,30 @@ else
         "12.4")
             CUDA_EXTRA="cu124"
             TORCH_VERSION="2.6"
+            TORCH_SERIES="2.6"
+            TORCH_PIN_VERSION="2.6.0"
+            TORCHAUDIO_PIN_VERSION="2.6.0"
+            TARGET_TORCH_CUDA="12.4"
+            TORCH_INDEX_URL="https://download.pytorch.org/whl/cu124"
             ;;
         "12.8")
             CUDA_EXTRA="cu128"
             TORCH_VERSION="2.7"
+            TORCH_SERIES="2.7"
+            TORCH_PIN_VERSION="2.7.0"
+            TORCHAUDIO_PIN_VERSION="2.7.0"
+            TARGET_TORCH_CUDA="12.8"
+            TORCH_INDEX_URL="https://download.pytorch.org/whl/cu128"
             ;;
         *)
             log_warning "Unsupported CUDA version: $CUDA_VERSION. Only CUDA 12.4 and 12.8 are supported. Defaulting to CUDA 12.8"
             CUDA_EXTRA="cu128"
             TORCH_VERSION="2.7"
+            TORCH_SERIES="2.7"
+            TORCH_PIN_VERSION="2.7.0"
+            TORCHAUDIO_PIN_VERSION="2.7.0"
+            TARGET_TORCH_CUDA="12.8"
+            TORCH_INDEX_URL="https://download.pytorch.org/whl/cu128"
             ;;
     esac
 
@@ -114,6 +177,12 @@ if $INSTALL_CMD; then
 else
     log_error "Failed to install project dependencies"
     exit 1
+fi
+
+# Step 1b: Ensure Torch build matches selected CUDA version
+if [[ "$OSTYPE" != "darwin"* ]]; then
+    log_info "Running Torch/CUDA compatibility pre-check and auto-repair..."
+    ensure_torch_cuda_compat
 fi
 
 # Step 2: Install flash-attn prebuild wheel (Linux only)

@@ -64,6 +64,11 @@ if [[ "$HW_MODE" == "GPU" ]]; then
     NUM_WORKERS=2
     BATCH_SIZE=8
 else
+    if command -v nvidia-smi &>/dev/null; then
+        warn "nvidia-smi is available but torch.cuda.is_available() is false."
+        warn "This usually means Torch/CUDA build mismatch with host driver."
+        warn "Try: CUDA_VERSION=12.4 bash setup/setup_python.sh"
+    fi
     warn "Hardware Detected: CPU only (No NVIDIA GPU/CUDA detected)."
     warn "Smoke tests will run in CPU fallback mode (slower, but functional for verification)."
     NUM_WORKERS=0
@@ -82,13 +87,14 @@ mkdir -p experiments
 CODEC_CKPT="models/codec/xcodec2/ckpt/epoch=4-step=1400000.ckpt"
 if [[ ! -f "$CODEC_CKPT" ]]; then
     info "Codec checkpoint not found at $CODEC_CKPT."
-    if command -v huggingface-cli &>/dev/null; then
-        info "Downloading xcodec2 checkpoint via huggingface-cli..."
-        huggingface-cli download HKUSTAudio/xcodec2 \
+    if command -v hf &>/dev/null; then
+        info "Downloading xcodec2 checkpoint via hf..."
+        hf download HKUSTAudio/xcodec2 \
             --include "ckpt/*" "config.json" "model.safetensors" \
             --local-dir models/codec/xcodec2
     else
-        warn "huggingface-cli not found. Please download HKUSTAudio/xcodec2 into models/codec/xcodec2 manually."
+        warn "hf command not found. Please install huggingface_hub and run 'hf auth login'."
+        warn "Then download HKUSTAudio/xcodec2 into models/codec/xcodec2 manually."
     fi
 else
     success "Codec checkpoint found: $CODEC_CKPT"
@@ -99,10 +105,10 @@ LLAMA_DIR="models/base_lm/Llama-3.2-1B-Instruct"
 if [[ ! -f "$LLAMA_DIR/model.safetensors" && ! -f "$LLAMA_DIR/consolidated.00.pth" ]]; then
     warn "Llama 3.2 1B base model not found in $LLAMA_DIR."
     warn "If you have access to gated models, download it using:"
-    echo "  huggingface-cli download meta-llama/Llama-3.2-1B-Instruct --local-dir models/base_lm/Llama-3.2-1B-Instruct"
+    echo "  hf download meta-llama/Llama-3.2-1B-Instruct --local-dir models/base_lm/Llama-3.2-1B-Instruct"
     read -r -p "Do you want to attempt downloading Llama-3.2-1B-Instruct now? (Requires HF login) [y/N] " DL_LLAMA
     if [[ "$DL_LLAMA" =~ ^[Yy]$ ]]; then
-        huggingface-cli download meta-llama/Llama-3.2-1B-Instruct --local-dir models/base_lm/Llama-3.2-1B-Instruct
+        hf download meta-llama/Llama-3.2-1B-Instruct --local-dir models/base_lm/Llama-3.2-1B-Instruct
     else
         warn "Skipping Llama download. Note that SFT and Inference smoke tests will fail if model is missing."
     fi
