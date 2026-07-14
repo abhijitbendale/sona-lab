@@ -38,8 +38,8 @@ Run these in order:
 Use this when you want a fresh local re-setup.
 
 1. Create env
-- `conda create -n inworld_tts python=3.10 -y`
-- `conda activate inworld_tts`
+- `conda create -n sona_lab python=3.10 -y`
+- `conda activate sona_lab`
 
 2. Install CPU PyTorch stack
 - `pip install torch==2.13.0+cpu torchaudio==2.11.0+cpu --index-url https://download.pytorch.org/whl/cpu`

@@ -50,10 +50,16 @@ If you prefer manual installation:
 conda create -n sona_lab python=3.10 -y
 conda activate sona_lab
 
-# Install dependencies (Linux CUDA 12.8 recommended)
-bash setup/setup_python.sh
-source .venv/bin/activate
+# Install dependencies (set CUDA version explicitly on cloud)
+CUDA_VERSION=12.4 bash setup/setup_python.sh
+
+# Authenticate for gated model downloads
+hf auth login
 ```
+
+`setup/setup_python.sh` now includes a Torch/CUDA compatibility pre-check.
+If it detects an incompatible Torch build, it automatically uninstalls mismatched
+`torch*` packages and installs a pinned compatible stack for the selected CUDA version.
 
 ---
 

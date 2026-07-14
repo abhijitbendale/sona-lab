@@ -59,8 +59,8 @@ cd tts
 ## 6) Create and activate conda environment
 
 ```bash
-conda create -n inworld_tts python=3.10 -y
-conda activate inworld_tts
+conda create -n sona_lab python=3.10 -y
+conda activate sona_lab
 python --version
 ```
 
@@ -96,7 +96,7 @@ python tools/serving/sample_inference.py --model_checkpoint_path=experiments/sft
 
 ```bash
 tmux new -s tts
-conda activate inworld_tts
+conda activate sona_lab
 python tts/training/main.py --config_path=example/configs/sft.json --run_name=sft_cloud
 ```
 

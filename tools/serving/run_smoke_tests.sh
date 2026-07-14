@@ -36,11 +36,11 @@ info "Detecting Python and Hardware environment..."
 
 # Activate conda environment or virtual environment if available
 if command -v conda &>/dev/null; then
-    # Try activating inworld_tts if it exists
-    if conda env list | grep -q "^inworld_tts "; then
-        info "Activating conda environment: inworld_tts"
+    # Try activating sona_lab if it exists
+    if conda env list | grep -q "^sona_lab "; then
+        info "Activating conda environment: sona_lab"
         eval "$(conda shell.bash hook)"
-        conda activate inworld_tts
+        conda activate sona_lab
     fi
 elif [[ -f "$REPO_ROOT/.venv/bin/activate" ]]; then
     info "Activating Python virtual environment (.venv)..."

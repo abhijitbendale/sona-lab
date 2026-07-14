@@ -125,8 +125,8 @@ cd tts
 ## 7) Create Python Environment
 
 ```bash
-conda create -n inworld_tts python=3.10 -y
-conda activate inworld_tts
+conda create -n sona_lab python=3.10 -y
+conda activate sona_lab
 python --version
 ```
 
@@ -135,14 +135,14 @@ python --version
 ### Option A (recommended): repo setup script using conda
 
 ```bash
-conda activate inworld_tts
+conda activate sona_lab
 bash setup/setup_python.sh
 ```
 
 ### Option B: direct pip install
 
 ```bash
-conda activate inworld_tts
+conda activate sona_lab
 pip install -U pip setuptools wheel
 pip install -e .[cu128]
 ```
